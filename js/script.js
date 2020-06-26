@@ -1,5 +1,6 @@
 //focus - name input element and place focus on it 
-document.getElementById("name").focus(); 
+const name = document.getElementById("name")
+name.focus(); 
 
 /** job role 
 text field appears when other is selected **/
@@ -109,31 +110,55 @@ if (node.checked = true) {
 //checks --> total $$$ 
 
 //payment info
-const 
+const payment = document.getElementById("payment"); 
+const cc = document.getElementById("credit-card"); 
+const paypal = document.getElementById("paypal"); 
+const bitcoin = document.getElementById("bitcoin"); 
 
-addEventListener("change", (e) => {
-	//credit card 
+//hide initially except credit card payments  
+cc.style.display = "block";
+paypal.style.display = "none"; 
+bitcoin.style.display = "none";
+
+payment.addEventListener("change", (e) => {
+//credit card 
 	if (e.target.value === "credit card") {
-		style.display = "";
+		cc.style.display = "block";
+		paypal.style.display = "none"; 
+		bitcoin.style.display = "none"; 
 	//paypal 
 	} else if (e.target.value === "paypal") {
-		style.display = "";
+		cc.style.display = "none";
+		paypal.style.display = "block"; 
+		bitcoin.style.display = "none";
 	//bitcoin 
 	} else if (e.target.value === "bitcoin") { 
-		style.display = "";
+		cc.style.display = "none";
+		paypal.style.display = "none"; 
+		bitcoin.style.display = "block";
 	} else {
-
+		cc.style.display = "none";
+		paypal.style.display = "none"; 
+		bitcoin.style.display = "none";
 	}
-)}; 
-//credit card default - hide paypal and bitcoin - payment should match payment option displayed
+}); 
 
-//paypal option - credit and bitcoin hidden 
 
-//bitcoin option - paypal and credit hidden 
-//select payment method should not be selected - cannot submit without this field 
 
 //form validation 
-//name field cannot be blank 
+//name field cannot be blank
+function isValidName(name) {
+	if (name.length < 1) {
+		name.innerHTML = "Name field cannot be blank"; 
+	}
+}
+
+function createListener() {
+
+}
+
+
+addEventListener("input", createListener(isValidName)); 
 //email field must be correctly formatted
 //register activities - one must be checked
 //credit card - cc number, zip code && 3 number CVV value
