@@ -1,27 +1,24 @@
-//focus - name input element and place focus on it 
+//focus on name field when page is loaded 
 const name = document.getElementById("name")
 name.focus(); 
 
-/** job role 
-text field appears when other is selected **/
+
+/** job role **/
 const dropTitle = document.getElementById("title");
-const otherText = document.getElementById("other-title"); 
+const otherTitle = document.getElementById("other-title"); 
 
-
-//add on change method 
-otherText.style.display = "none";
+//when other is selected shows "your job role" field 
+otherTitle.style.display = "none";
 dropTitle.addEventListener("change", (e) => {
 	if (e.target.value === "other") {
- 		otherText.style.display = "block";
+ 		otherTitle.style.display = "block";
 	} else {
-		otherText.style.display = "none";
+		otherTitle.style.display = "none";
 	}
 });
 
 
-/** t-shirt info
-theme selected --> color
-switch themes --> changes to the correct one **/ 
+/** t-shirt info **/ 
 const dropDesign = document.querySelector("#design");
 const dropColor = document.querySelectorAll("#color option"); 
 const selectColor = document.querySelector("#color")
@@ -29,7 +26,6 @@ const update = document.createElement("option");
 
 //hide select theme option in the design menu
 document.querySelectorAll("#design option")[0].style.display = 'none';
-
 
 //update color field to read "Please select a T-Shirt theme"
 update.textContent = "Please select a T-shirt theme"; 
@@ -41,7 +37,6 @@ update.style.display = "none";
 for (let i = 0; i < dropColor.length; i++) {
 	dropColor[i].style.display = "none"; 
 }
-
 
 //theme js puns --> cornflower blue, dark slate grey and gold 
 dropDesign.addEventListener("change", (e) => {
@@ -69,57 +64,58 @@ dropDesign.addEventListener("change", (e) => {
 	
 
 
-
-//register for activities 
+/** Activity Registration **/ 
+let totalPrice = document.createElement('div'); 
 let totalCost = 0; 
-const mainConf = document.getElementsByName("all");
-const totalPrice = document.createElement("LI"); 
-const jsFw = document.getElementsByName("js-frameworks"); 
-const express = document.getElementsByName("express"); 
-const jsLibs = document.getElementsByName("js-libs"); 
-const node = document.getElementsByName("node"); 
-const activities = document.getElementsByClassName("activities"); 
+const activities = document.querySelector(".activities");
+const checkedBox = document.querySelectorAll('.activities input');
 
-if (mainConf.checked = true) {
-	totalCost += 200; 
-}
-//if any of the other ones are checked add 100 use a loop 
-for (let i = 1; i < activities.length; i++) {
-	if (activities[i].checked = true) {
-		totalCost += 100; 
+//add Total Price
+activities.appendChild(totalPrice); 
+
+//Adding the cost of each event 
+activities.addEventListener('change', (e) => {
+	let check = e.target; 
+	let cost = check.getAttribute('data-cost');
+	cost = parseInt(cost); 
+	if (check.checked) {
+		totalPrice.style.color = "black"; 
+		totalCost += cost; 
+	} else {
+		totalCost -= cost; 
 	}
-}
 
-//js framework vs express 
-if (jsFw.checked = true) {
-	express.checked = false; 
-}
-if (express.checked = true) {
-	jsFw.checked = false;
-}
-//js libs vs node 
-if (jsLibs.checked = true) {
-	node.checked = false; 
-}
-if (node.checked = true) {
-	jsLibs.checked = false; 
-}
+ 	//shows total $$ on page 
+	totalPrice.textContent = `Total: $${totalCost}`;  
 
-//check --> disables 
-//uncheck --> not disabled
-//checks --> total $$$ 
+	//checkboxes 
+	for (let i = 0; i < checkedBox.length; i++) {
+		let time = check.getAttribute('data-day-and-time'); 
+		const session = checkedBox[i].getAttribute('data-day-and-time')
+		if (time === session && check !== checkedBox[i]) {
+			if (check.checked) {
+				checkedBox[i].disabled = true; 
+			} else {
+				checkedBox[i].disabled = false; 
+			}
+		}
+	}
+});
 
-//payment info
+
+/**payment section **/
 const payment = document.getElementById("payment"); 
 const cc = document.getElementById("credit-card"); 
 const paypal = document.getElementById("paypal"); 
 const bitcoin = document.getElementById("bitcoin"); 
 
 //hide initially except credit card payments  
+payment.removeChild(payment[0]); 
 cc.style.display = "block";
 paypal.style.display = "none"; 
 bitcoin.style.display = "none";
 
+//payment selection changes 
 payment.addEventListener("change", (e) => {
 //credit card 
 	if (e.target.value === "credit card") {
@@ -144,36 +140,100 @@ payment.addEventListener("change", (e) => {
 }); 
 
 
+/** form validation **/
+function validName() {
+	const regex = /^[a-zA-Z ]{2,30}$/; 
+	if (!regex.test(name.value)) {
+		name.style.borderColor = 'red'; 
+		return false; 
+	} else {
+		name.style.borderColor = 'white'; 
+		return true; 
+	}	
+}
 
-//form validation 
-//name field cannot be blank
-function isValidName(name) {
-	if (name.length < 1) {
-		name.innerHTML = "Name field cannot be blank"; 
+function validEmail() {
+	const email = document.getElementById('mail'); 
+	const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; 
+	if (!regex.test(email.value)) {
+		email.style.borderColor = 'red'; 
+		return false; 
+	} else {
+		email.style.borderColor = 'white'; 
+		return true; 
 	}
 }
 
-function createListener() {
-
+function validAct() {
+	const allActivities = document.querySelectorAll('.activities input');
+	let checkBoxes = 0; 
+	for (let i = 0; i < allActivities.length; i++) {
+		if (allActivities[i].checked) {
+			totalPrice.textContent = `Total: $${totalCost}`; 
+			return true; 
+		} else {
+			totalPrice.style.color = 'red';
+			totalPrice.textContent = "Please select an activity"
+		}	
+	} return false; 
 }
 
+function validCC() {
+	const cc = document.getElementById('cc-num'); 
+	const regex = /^[0-9]{13,16}$/; 
+	if (!regex.test(cc.value)) {
+		cc.style.borderColor = 'red'; 
+		return false; 
+	} else {
+		cc.style.borderColor = 'white'; 
+		return true; 
+	}
+}
 
-addEventListener("input", createListener(isValidName)); 
-//email field must be correctly formatted
-//register activities - one must be checked
-//credit card - cc number, zip code && 3 number CVV value
-	//cc number - 13-16 digits 
-	//zip code - 5 digits 
-	//CVV - 3 digits 
+function validZip() {
+	const zip = document.getElementById('zip'); 
+	const regex = /^\d{5}$|^\d{5}-\d{4}$/;
+	if (!regex.test(zip.value)) {
+		zip.style.borderColor = 'red'; 
+		return false; 
+	} else {
+		zip.style.borderColor = 'white'; 
+		return true; 
+	}
+}
 
-//form validation messages 
-//validation error - highlight area 
-//name 
-//email 
-//register for activities 
-//payment
-	//credit card number 
-	//zip code 
-	//cvv 
-//doesn't show error by default only after submission 
-//empty form --> error 
+function validCVV() {
+	const cvv = document.getElementById('cvv'); 
+	const regex = /^[0-9]{3}$/;
+	if (!regex.test(cvv.value)) {
+		cvv.style.borderColor = 'red'; 
+		return false; 
+	} else {
+		cvv.style.borderColor = 'white'; 
+		return true; 
+	}
+}
+
+addEventListener("submit", (e) => {
+	if (!validName()) {
+		e.preventDefault(); 
+	}
+	if (!validEmail()) {
+		e.preventDefault(); 
+	}
+	if (!validAct()) {
+		e.preventDefault(); 
+	}
+	if (payment[0].selected === true) {
+		if(!validCC()) {
+			e.preventDefault(); 
+		}
+		if(!validZip()) {
+			e.preventDefault(); 
+		}
+		if(!validCVV()) {
+			e.preventDefault(); 
+		}
+	}
+}); 
+
